@@ -1,44 +1,33 @@
 package ru.rishat;
 
-import java.util.concurrent.*;
+import javax.swing.table.TableRowSorter;
 
 public class App {
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newFixedThreadPool(3, new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                return thread;
-            }
-        });
-
-        executorService.execute(() -> {
-            try {
-                while (true) {
-                    System.out.print(".");
-                    Thread.sleep(300);
+        BlockingQueue blockingQueue = new BlockingQueue();
+        new Thread(() -> {
+            while (true) {
+                Runnable task = blockingQueue.take();
+                if (task != null) {
+                    new Thread(task).start();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        });
-        Future<String> futureName = executorService.submit(() -> {
-            Thread.sleep(5000);
-            return "John";
-        });
-        Future<Integer> futureAge = executorService.submit(() -> {
-            Thread.sleep(5000);
-            return 43;
-        });
+        }).start();
 
-        try {
-            String name = futureName.get();
-            Integer age = futureAge.get();
-            System.out.println("\n" + name + " - age:" + age);
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        for (int i = 0; i < 10; i++) {
+            final int index = i;
+            blockingQueue.add(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("___" + index);
+                }
+            });
         }
     }
 }
