@@ -1,17 +1,24 @@
 package ru.rishat;
 
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class App {
 
     public static void main(String[] args) {
-        BlockingQueue blockingQueue = new BlockingQueue();
+        BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
         new Thread(() -> {
             int i =0;
             while (true) {
                 System.out.println("Counter: " + i++);
-                Runnable task = blockingQueue.take();
-                if (task != null) {
-                    new Thread(task).start();
+                Runnable task =null;
+                try {
+                    task = blockingQueue.take();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                new Thread(task).start();
             }
         }).start();
 

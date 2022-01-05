@@ -1,4 +1,4 @@
-package ru.rishat;
+package ru.rishat.bq;
 
 import java.util.LinkedList;
 import java.util.Queue;
