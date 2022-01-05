@@ -1,46 +1,48 @@
 package ru.rishat;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Object monitor = new Object();
-        List<Thread> threads = new ArrayList<>();
-       Thread thread1 = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               for (int i = 0; i < 5; i++) {
-                   System.out.print("A");
-               }
-           }
-       });
-       Thread thread2 = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               for (int i = 0; i < 5; i++) {
-                   System.out.print("B");
-               }
-           }
-       });
-       Thread thread3 = new Thread(new Runnable() {
-           @Override
-           public void run() {
-               for (int i = 0; i < 5; i++) {
-                   System.out.print("C");
 
-               }
-           }
-       });
+        Thread threadA = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                synchronized (monitor) {
+                    System.out.print("A");
+                }
+                try {
+                    monitor.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        Thread threadB = new Thread(() -> {
+            synchronized (monitor) {
+                System.out.print("B");
+            }
+            try {
+                monitor.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-       threads.add(thread1);
-       threads.add(thread2);
-       threads.add(thread3);
+        });
+        Thread threadC = new Thread(() -> {
+            synchronized (monitor) {
+                System.out.print("C");
+            }
+            try {
+                monitor.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        for (Thread thread : threads) {
-            thread.start();
-        }
+        });
+
+        threadA.start();
+        threadB.start();
+        threadC.start();
 
     }
 }
