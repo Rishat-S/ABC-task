@@ -1,36 +1,46 @@
 package ru.rishat;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.ArrayList;
+import java.util.List;
 
 public class App {
 
     public static void main(String[] args) {
-        BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue<>();
-        new Thread(() -> {
-            int i =0;
-            while (true) {
-                System.out.println("Counter: " + i++);
-                Runnable task =null;
-                try {
-                    task = blockingQueue.take();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                new Thread(task).start();
-            }
-        }).start();
+        Object monitor = new Object();
+        List<Thread> threads = new ArrayList<>();
+       Thread thread1 = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               for (int i = 0; i < 5; i++) {
+                   System.out.print("A");
+               }
+           }
+       });
+       Thread thread2 = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               for (int i = 0; i < 5; i++) {
+                   System.out.print("B");
+               }
+           }
+       });
+       Thread thread3 = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               for (int i = 0; i < 5; i++) {
+                   System.out.print("C");
 
-        for (int i = 0; i < 10; i++) {
-            final int index = i;
-            blockingQueue.add(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("___" + index);
-            });
+               }
+           }
+       });
+
+       threads.add(thread1);
+       threads.add(thread2);
+       threads.add(thread3);
+
+        for (Thread thread : threads) {
+            thread.start();
         }
+
     }
 }
