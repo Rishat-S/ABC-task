@@ -2,42 +2,68 @@ package ru.rishat;
 
 public class App {
 
+    static final Monitor monitor = new Monitor();
+
     public static void main(String[] args) throws InterruptedException {
-        Object monitor = new Object();
 
         Thread threadA = new Thread(() -> {
+
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
-                    System.out.print("A");
-                }
-                try {
-                    monitor.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    if (monitor.x == 1) {
+                        System.out.print("A");
+                        monitor.x = 2;
+                        monitor.notifyAll();
+                    } else {
+                        try {
+                            monitor.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 }
             }
         });
+
         Thread threadB = new Thread(() -> {
-            synchronized (monitor) {
-                System.out.print("B");
-            }
-            try {
-                monitor.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
+            for (int i = 0; i < 5; i++) {
+                synchronized (monitor) {
+                    if (monitor.x == 2) {
+                        System.out.print("B");
+                        monitor.x = 3;
+                        monitor.notifyAll();
+                    } else {
+                        try {
+                            monitor.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            }
         });
-        Thread threadC = new Thread(() -> {
-            synchronized (monitor) {
-                System.out.print("C");
-            }
-            try {
-                monitor.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
+        Thread threadC = new Thread(() -> {
+
+            for (int i = 0; i < 5; i++) {
+                synchronized (monitor) {
+                    if (monitor.x == 3) {
+                        System.out.print("C");
+                        monitor.x = 1;
+                        monitor.notifyAll();
+                    } else {
+                        try {
+                            monitor.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            }
         });
 
         threadA.start();
@@ -45,4 +71,8 @@ public class App {
         threadC.start();
 
     }
+}
+
+class Monitor {
+    int x = 1;
 }
