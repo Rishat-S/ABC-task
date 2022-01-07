@@ -7,7 +7,6 @@ public class App {
     public static void main(String[] args) {
 
         new Thread(() -> {
-
             for (int i = 0; i < 5; i++) {
                 synchronized (MONITOR) {
                     while (MONITOR.x != 1) {
