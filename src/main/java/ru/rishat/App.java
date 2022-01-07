@@ -4,24 +4,22 @@ public class App {
 
     static final Monitor monitor = new Monitor();
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         Thread threadA = new Thread(() -> {
 
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
-                    if (monitor.x == 1) {
-                        System.out.print("A");
-                        monitor.x = 2;
-                        monitor.notifyAll();
-                    } else {
+                    while (monitor.x != 1) {
                         try {
                             monitor.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-
+                    System.out.print("A");
+                    monitor.x = 2;
+                    monitor.notifyAll();
                 }
             }
         });
@@ -30,18 +28,17 @@ public class App {
 
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
-                    if (monitor.x == 2) {
-                        System.out.print("B");
-                        monitor.x = 3;
-                        monitor.notifyAll();
-                    } else {
+
+                    while (monitor.x != 2) {
                         try {
                             monitor.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-
+                    System.out.print("B");
+                    monitor.x = 3;
+                    monitor.notifyAll();
                 }
             }
         });
@@ -50,18 +47,16 @@ public class App {
 
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
-                    if (monitor.x == 3) {
-                        System.out.print("C");
-                        monitor.x = 1;
-                        monitor.notifyAll();
-                    } else {
+                    while (monitor.x != 3) {
                         try {
                             monitor.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-
+                        System.out.print("C");
+                        monitor.x = 1;
+                        monitor.notifyAll();
                 }
             }
         });
