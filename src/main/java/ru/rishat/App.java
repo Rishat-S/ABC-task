@@ -1,57 +1,36 @@
 package ru.rishat;
 
+import static ru.rishat.App.A;
+
 public class App {
 
     static final Monitor MONITOR = new Monitor();
+    static final String A = "A";
+    static final String B = "B";
+    static final String C = "C";
 
     public static void main(String[] args) {
 
-        new Thread(() -> {
-            for (int i = 0; i < 5; i++) {
-                synchronized (MONITOR) {
-                    while (MONITOR.x != 1) {
-                        try {
-                            MONITOR.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    System.out.print("A");
-                    MONITOR.x = 2;
-                    MONITOR.notifyAll();
-                }
-            }
-        }).start();
+        threadX(A, B);
 
-        new Thread(() -> {
-            for (int i = 0; i < 5; i++) {
-                synchronized (MONITOR) {
-                    while (MONITOR.x != 2) {
-                        try {
-                            MONITOR.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    System.out.print("B");
-                    MONITOR.x = 3;
-                    MONITOR.notifyAll();
-                }
-            }
-        }).start();
+        threadX(B, C);
 
+        threadX(C, A);
+    }
+
+    private static void threadX(String a, String b) {
         new Thread(() -> {
             for (int i = 0; i < 5; i++) {
                 synchronized (MONITOR) {
-                    while (MONITOR.x != 3) {
+                    while (!MONITOR.nextLetter.equals(a)) {
                         try {
                             MONITOR.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                    System.out.print("C");
-                    MONITOR.x = 1;
+                    System.out.print(a);
+                    MONITOR.nextLetter = b;
                     MONITOR.notifyAll();
                 }
             }
@@ -60,5 +39,5 @@ public class App {
 }
 
 class Monitor {
-    int x = 1;
+    String nextLetter = A;
 }
