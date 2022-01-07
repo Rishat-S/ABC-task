@@ -25,10 +25,8 @@ public class App {
         });
 
         Thread threadB = new Thread(() -> {
-
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
-
                     while (monitor.x != 2) {
                         try {
                             monitor.wait();
@@ -44,7 +42,6 @@ public class App {
         });
 
         Thread threadC = new Thread(() -> {
-
             for (int i = 0; i < 5; i++) {
                 synchronized (monitor) {
                     while (monitor.x != 3) {
@@ -54,9 +51,9 @@ public class App {
                             e.printStackTrace();
                         }
                     }
-                        System.out.print("C");
-                        monitor.x = 1;
-                        monitor.notifyAll();
+                    System.out.print("C");
+                    monitor.x = 1;
+                    monitor.notifyAll();
                 }
             }
         });
