@@ -4,6 +4,7 @@ import static ru.rishat.App.A;
 
 public class App {
 
+    public static final int COUNT = 5;
     static final Monitor MONITOR = new Monitor();
     static final String A = "A";
     static final String B = "B";
@@ -20,7 +21,7 @@ public class App {
 
     private static void threadX(String currentLetter, String nextLetter) {
         new Thread(() -> {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < COUNT; i++) {
                 synchronized (MONITOR) {
                     while (!MONITOR.nextLetter.equals(currentLetter)) {
                         try {
