@@ -18,19 +18,19 @@ public class App {
         threadX(C, A);
     }
 
-    private static void threadX(String a, String b) {
+    private static void threadX(String currentLetter, String nextLetter) {
         new Thread(() -> {
             for (int i = 0; i < 5; i++) {
                 synchronized (MONITOR) {
-                    while (!MONITOR.nextLetter.equals(a)) {
+                    while (!MONITOR.nextLetter.equals(currentLetter)) {
                         try {
                             MONITOR.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-                    System.out.print(a);
-                    MONITOR.nextLetter = b;
+                    System.out.print(currentLetter);
+                    MONITOR.nextLetter = nextLetter;
                     MONITOR.notifyAll();
                 }
             }
