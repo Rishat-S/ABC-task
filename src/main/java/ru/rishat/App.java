@@ -2,66 +2,61 @@ package ru.rishat;
 
 public class App {
 
-    static final Monitor monitor = new Monitor();
+    static final Monitor MONITOR = new Monitor();
 
     public static void main(String[] args) {
 
-        Thread threadA = new Thread(() -> {
+        new Thread(() -> {
 
             for (int i = 0; i < 5; i++) {
-                synchronized (monitor) {
-                    while (monitor.x != 1) {
+                synchronized (MONITOR) {
+                    while (MONITOR.x != 1) {
                         try {
-                            monitor.wait();
+                            MONITOR.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     System.out.print("A");
-                    monitor.x = 2;
-                    monitor.notifyAll();
+                    MONITOR.x = 2;
+                    MONITOR.notifyAll();
                 }
             }
-        });
+        }).start();
 
-        Thread threadB = new Thread(() -> {
+        new Thread(() -> {
             for (int i = 0; i < 5; i++) {
-                synchronized (monitor) {
-                    while (monitor.x != 2) {
+                synchronized (MONITOR) {
+                    while (MONITOR.x != 2) {
                         try {
-                            monitor.wait();
+                            MONITOR.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     System.out.print("B");
-                    monitor.x = 3;
-                    monitor.notifyAll();
+                    MONITOR.x = 3;
+                    MONITOR.notifyAll();
                 }
             }
-        });
+        }).start();
 
-        Thread threadC = new Thread(() -> {
+        new Thread(() -> {
             for (int i = 0; i < 5; i++) {
-                synchronized (monitor) {
-                    while (monitor.x != 3) {
+                synchronized (MONITOR) {
+                    while (MONITOR.x != 3) {
                         try {
-                            monitor.wait();
+                            MONITOR.wait();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
                     System.out.print("C");
-                    monitor.x = 1;
-                    monitor.notifyAll();
+                    MONITOR.x = 1;
+                    MONITOR.notifyAll();
                 }
             }
-        });
-
-        threadA.start();
-        threadB.start();
-        threadC.start();
-
+        }).start();
     }
 }
 
