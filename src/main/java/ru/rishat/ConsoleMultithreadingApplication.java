@@ -1,8 +1,6 @@
 package ru.rishat;
 
-import static ru.rishat.App.A;
-
-public class App {
+public class ConsoleMultithreadingApplication {
 
     public static final int COUNT = 5;
     static final Monitor MONITOR = new Monitor();
@@ -39,6 +37,3 @@ public class App {
     }
 }
 
-class Monitor {
-    String nextLetter = A;
-}
